@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vmix_controller_app/base_client.dart';
 
 class Addressconfig extends StatefulWidget {
   const Addressconfig({super.key});
@@ -54,9 +55,14 @@ class _AddressconfigState extends State<Addressconfig> {
               controller: _textEditingControllerPort,
             ),
             ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   print(fieldIp);
                   print(fieldPort);
+                  var response = await BaseClient()
+                      .get(fieldIp, fieldPort, fieldIp)
+                      .catchError((err) {});
+                  if (response == null) return;
+                  print("success");
                 },
                 child: const Text("start")),
           ],
