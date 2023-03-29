@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 
@@ -28,7 +27,8 @@ class BaseClient {
   }
 
   Future<dynamic> change(String api) async {
-    var url = Uri.parse(baseUrl + "?Function=OverlayInput1&Input=+" + api);
+    var url = Uri.parse("$baseUrl?Function=OverlayInput1In&Input=$api");
     var response = await client.post(url).catchError((err) => {print(err)});
+    return response;
   }
 }
