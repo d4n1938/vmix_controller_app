@@ -27,7 +27,7 @@ class BaseClient {
   }
 
   Future<dynamic> change(String api) async {
-    var url = Uri.parse("$baseUrl?Function=OverlayInput1&Input=$api");
+    var url = Uri.parse("$baseUrl?Function=OverlayInput1In&Input=$api");
     var response = await client.post(url).catchError((err) => {print(err)});
     return response;
   }
