@@ -27,10 +27,12 @@ class Controller extends StatelessWidget {
                 .map(
                   (e) => ElevatedButton(
                       onPressed: () async {
-                        var response = await BaseClient(ip, port)
-                            .change(e)
-                            .catchError((err) {});
-                        if (response == null) return;
+                        try {
+                          var response = await BaseClient(ip, port)
+                              .change(e['number'])
+                              .catchError((err) {});
+                          if (response == null) return;
+                        } catch (e) {}
                       },
                       child: SizedBox(
                         width: 100,
