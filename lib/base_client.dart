@@ -1,19 +1,34 @@
-import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-const String baseUrl = "http://";
+import 'package:http/http.dart' as http;
+import 'package:xml2json/xml2json.dart';
 
 class BaseClient {
-  var client = http.Client();
-  Future<dynamic> get(String ip, String port, String id) async {
-    var url = Uri.parse("$baseUrl$ip:$port/api/");
-    var response = await client.get(url);
+  String ip = "";
+  String port = "";
+  String baseUrl = "";
 
-    if (response.statusCode == 200) {
-      return response.body;
-    } else {
-      return null;
-    }
+  BaseClient(this.ip, this.port) {
+    baseUrl = "http://$ip:$port/api/";
+  }
+  var client = http.Client();
+
+  Future<dynamic> get() async {
+    var url = Uri.parse(baseUrl);
+    var response = await client.get(url).catchError((err) => {print(err)});
+    if (response.statusCode != 200) return;
+
+    final myTransformer = Xml2Json();
+
+    myTransformer.parse(response.body);
+    var jsonResponse = myTransformer.toGData();
+    Map<String, dynamic> data = json.decode(jsonResponse);
+
+    return data["vmix"]["inputs"]["input"];
   }
 
-  Future<dynamic> post(String api) async {}
+  Future<dynamic> change(String api) async {
+    var url = Uri.parse(baseUrl + "?Function=OverlayInput1&Input=+" + api);
+    var response = await client.post(url).catchError((err) => {print(err)});
+  }
 }
