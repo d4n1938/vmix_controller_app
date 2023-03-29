@@ -1,10 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:vmix_controller_app/base_client.dart';
 import 'package:vmix_controller_app/pages/controller.dart';
-
-import 'package:xml2json/xml2json.dart';
 
 class Addressconfig extends StatefulWidget {
   const Addressconfig({super.key});
@@ -16,8 +12,6 @@ class Addressconfig extends StatefulWidget {
 class _AddressconfigState extends State<Addressconfig> {
   var fieldIp = "192.168.3.8";
   var fieldPort = "8088";
-
-  final myTransformer = Xml2Json();
 
   late TextEditingController _textEditingControllerIp;
   late TextEditingController _textEditingControllerPort;
@@ -63,17 +57,17 @@ class _AddressconfigState extends State<Addressconfig> {
             ),
             ElevatedButton(
                 onPressed: () async {
-                  var response = await BaseClient()
-                      .get(fieldIp, fieldPort, fieldIp)
+                  var response = await BaseClient(fieldIp, fieldPort)
+                      .get()
                       .catchError((err) {});
                   if (response == null) return;
-                  myTransformer.parse(response);
-                  var jsonResponse = myTransformer.toGData();
-                  Map<String, dynamic> data = json.decode(jsonResponse);
+
                   // ignore: use_build_context_synchronously
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Controller(data)),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Controller(response, fieldIp, fieldPort)),
                   );
                 },
                 child: const Text("start")),
