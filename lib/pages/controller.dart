@@ -8,9 +8,7 @@ class Controller extends StatelessWidget {
   String port;
   Map<String, dynamic> newData = {};
 
-  Controller(this.data, this.ip, this.port) {
-    print(data);
-  }
+  Controller(this.data, this.ip, this.port, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,30 +16,27 @@ class Controller extends StatelessWidget {
       appBar: AppBar(
         title: const Text('controller'),
       ),
-      body: Container(
-        color: Colors.red,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: data
-                .map(
-                  (e) => ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          var response = await BaseClient(ip, port)
-                              .change(e['number'])
-                              .catchError((err) {});
-                          if (response == null) return;
-                        } catch (e) {}
-                      },
-                      child: SizedBox(
-                        width: 100,
-                        height: 80,
-                        child: Center(child: Text(e["title"].toString())),
-                      )),
-                )
-                .toList(),
-          ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: data
+              .map(
+                (e) => ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        var response = await BaseClient(ip, port)
+                            .change(e['number'])
+                            .catchError((err) {});
+                        if (response == null) return;
+                      } catch (e) {}
+                    },
+                    child: SizedBox(
+                      width: 100,
+                      height: 80,
+                      child: Center(child: Text(e["title"].toString())),
+                    )),
+              )
+              .toList(),
         ),
       ),
     );
