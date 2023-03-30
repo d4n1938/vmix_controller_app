@@ -13,6 +13,19 @@ class _AddressconfigState extends State<Addressconfig> {
   var fieldIp = "192.168.3.8";
   var fieldPort = "8088";
 
+  var err = false;
+
+  void showErr() {
+    setState(() {
+      err = true;
+    });
+    Future.delayed(const Duration(seconds: 3), () {
+      setState(() {
+        err = false;
+      });
+    });
+  }
+
   late TextEditingController _textEditingControllerIp;
   late TextEditingController _textEditingControllerPort;
 
@@ -55,12 +68,23 @@ class _AddressconfigState extends State<Addressconfig> {
               textAlign: TextAlign.center,
               controller: _textEditingControllerPort,
             ),
+            err
+                ? const Text(
+                    "device not found ",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 255, 7, 57), fontSize: 20),
+                  )
+                : const Text(""),
             ElevatedButton(
                 onPressed: () async {
                   var response = await BaseClient(fieldIp, fieldPort)
                       .get()
                       .catchError((err) {});
-                  if (response == null) return;
+                  if (response == null) {
+                    showErr();
+                    return;
+                  }
 
                   // ignore: use_build_context_synchronously
                   Navigator.push(
