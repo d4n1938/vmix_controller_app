@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vmix_controller_app/base_client.dart';
+import 'package:vmix_controller_app/pages/address_helper.dart';
 import 'package:vmix_controller_app/pages/controller.dart';
+
+import 'models/address_info.dart';
+import 'package:flutter/material.dart';
 
 class Addressconfig extends StatefulWidget {
   const Addressconfig({super.key});
@@ -9,11 +13,21 @@ class Addressconfig extends StatefulWidget {
   State<Addressconfig> createState() => _AddressconfigState();
 }
 
+class MainModel extends ChangeNotifier {
+  String text = 'テキスト';
+
+  void changeText() {
+    text = 'テキストが変わった';
+    notifyListeners();
+  }
+}
+
 class _AddressconfigState extends State<Addressconfig> {
-  var fieldIp = "192.168.3.8";
+  var fieldIp = "0.0.0.0";
   var fieldPort = "8088";
 
   var err = false;
+  var set = false;
 
   void showErr() {
     setState(() {
@@ -28,12 +42,21 @@ class _AddressconfigState extends State<Addressconfig> {
 
   late TextEditingController _textEditingControllerIp;
   late TextEditingController _textEditingControllerPort;
+  final AddressHelper _addressHelper = AddressHelper();
 
   @override
   void initState() {
     super.initState();
-    _textEditingControllerIp = TextEditingController(text: fieldIp);
+
+    // _textEditingControllerIp = TextEditingController(text: fieldIp);
     _textEditingControllerPort = TextEditingController(text: fieldPort);
+
+    _addressHelper.initializeDatabase().then((e) {
+      debugPrint("---------------database created");
+      _addressHelper.getLastData().then((value) => {
+            _textEditingControllerIp = TextEditingController(text: value["ip"])
+          });
+    });
   }
 
   @override
@@ -46,7 +69,7 @@ class _AddressconfigState extends State<Addressconfig> {
           children: <Widget>[
             TextField(
               style: const TextStyle(
-                fontSize: 70,
+                fontSize: 60,
               ),
               onChanged: (value) => {
                 setState(() {
@@ -58,7 +81,7 @@ class _AddressconfigState extends State<Addressconfig> {
             ),
             TextField(
               style: const TextStyle(
-                fontSize: 70,
+                fontSize: 60,
               ),
               onChanged: (value) => {
                 setState(() {
@@ -78,6 +101,10 @@ class _AddressconfigState extends State<Addressconfig> {
                 : const Text(""),
             ElevatedButton(
                 onPressed: () async {
+                  var addressInfo = AddressInfo(
+                      ip: _textEditingControllerIp.text,
+                      port: _textEditingControllerPort.text);
+                  _addressHelper.insertAddress(addressInfo);
                   var response = await BaseClient(fieldIp, fieldPort)
                       .get()
                       .catchError((err) {});

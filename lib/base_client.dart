@@ -14,16 +14,20 @@ class BaseClient {
 
   Future<dynamic> get() async {
     var url = Uri.parse(baseUrl);
-    var response = await client.get(url).catchError((err) => {print(err)});
-    if (response.statusCode != 200) return;
+    try {
+      var response = await client.get(url).catchError((err) => {print(err)});
+      if (response.statusCode != 200) return;
 
-    final myTransformer = Xml2Json();
+      final myTransformer = Xml2Json();
 
-    myTransformer.parse(response.body);
-    var jsonResponse = myTransformer.toGData();
-    Map<String, dynamic> data = json.decode(jsonResponse);
-
-    return data["vmix"]["inputs"]["input"];
+      myTransformer.parse(response.body);
+      var jsonResponse = myTransformer.toGData();
+      Map<String, dynamic> data = json.decode(jsonResponse);
+      return data["vmix"]["inputs"]["input"];
+    } catch (e) {
+      print("devise not found");
+      return;
+    }
   }
 
   Future<dynamic> change(String api) async {
