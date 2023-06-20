@@ -10,7 +10,7 @@ class Addressconfig extends StatefulWidget {
 }
 
 class _AddressconfigState extends State<Addressconfig> {
-  var fieldIp = "192.168.3.8";
+  var fieldIp = "192.168.1.6";
   var fieldPort = "8088";
 
   late TextEditingController _textEditingControllerIp;
