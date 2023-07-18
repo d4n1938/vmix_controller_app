@@ -8,7 +8,7 @@ class Controller extends StatelessWidget {
   String port;
   Map<String, dynamic> newData = {};
 
-  Controller(this.data, this.ip, this.port) {
+  Controller(this.data, this.ip, this.port, {super.key}) {
     print(data);
   }
 
@@ -18,28 +18,25 @@ class Controller extends StatelessWidget {
       appBar: AppBar(
         title: const Text('controller'),
       ),
-      body: Container(
-        color: Colors.red,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: data
-                .map(
-                  (e) => ElevatedButton(
-                      onPressed: () async {
-                        var response = await BaseClient(ip, port)
-                            .change(e)
-                            .catchError((err) {});
-                        if (response == null) return;
-                      },
-                      child: SizedBox(
-                        width: 100,
-                        height: 80,
-                        child: Center(child: Text(e["title"].toString())),
-                      )),
-                )
-                .toList(),
-          ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: data
+              .map(
+                (e) => ElevatedButton(
+                    onPressed: () async {
+                      var response = await BaseClient(ip, port)
+                          .change(e["key"])
+                          .catchError((err) {});
+                      if (response == null) return;
+                    },
+                    child: SizedBox(
+                      width: 100,
+                      height: 80,
+                      child: Center(child: Text(e["title"].toString())),
+                    )),
+              )
+              .toList(),
         ),
       ),
     );
